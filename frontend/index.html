@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MonsterHub</title>
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+
+<body>
+  <div id="gameRoot"></div>
+
+  <div id="uiRoot">
+    <div id="log"></div>
+
+    <div id="chatRow">
+      <input id="chat" placeholder="Digite e aperte Enter..." />
+      <button id="send" type="button">Enviar</button>
+    </div>
+
+    <button id="leaveBtn" type="button">Sair</button>
+  </div>
+
+  <div class="bg"></div>
+  <div class="fog"></div>
+  <div class="grain"></div>
+
+  <div id="loginOverlay" class="overlay">
+    <div class="card" id="loginCard">
+      <div class="cardInner">
+        <div class="logoWrap">
+          <img class="logo" src="./assets/logo.png" alt="MonsterHub Logo">
+        </div>
+
+        <div class="inner">
+          <p class="subtitle">Entre com um nome e escolha seu monstro.</p>
+          <div class="divider"></div>
+
+          <div class="form">
+            <div class="field">
+              <label for="loginName">Nome do jogador</label>
+              <input id="loginName" placeholder="Ex: Miguel" maxlength="20" autocomplete="off" autofocus>
+            </div>
+
+            <div class="field">
+              <label for="loginMonster">Monstro</label>
+              <select id="loginMonster">
+                <option value="wolf">Lobisomem</option>
+                <option value="vampire">Vampiro</option>
+                <option value="mummy">Múmia</option>
+                <option value="imp">Imp</option>
+                <option value="goblin">Goblin</option>
+                <option value="golem">Golem</option>
+              </select>
+            </div>
+
+            <div class="btnWrap">
+              <button id="loginBtn" type="button">Entrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+
+</html>

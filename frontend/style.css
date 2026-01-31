@@ -1,0 +1,339 @@
+:root{
+  --text:#e5e7eb;
+  --stroke: rgba(255,255,255,.12);
+  --panel: rgba(6, 8, 16, .78);
+  --panel2: rgba(10, 12, 24, .70);
+  --accent: rgba(168,85,247,.85);
+  --accent2: rgba(239,68,68,.70);
+}
+
+html, body{
+  margin:0;
+  padding:0;
+  height:100%;
+  background:#050611;
+  color: var(--text);
+  font-family: system-ui, Arial;
+  overflow:hidden;
+}
+
+/* =========================
+   GAME / UI VISIBILITY
+   ========================= */
+#gameRoot{
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: none;
+  background: #0b1020;
+}
+
+#uiRoot{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;              /* ✅ UI SEMPRE ACIMA DO CANVAS */
+  display: none;
+  pointer-events: none;        /* ✅ só os filhos que liberam clique */
+  font-family: system-ui, Arial;
+}
+
+body.in-game #gameRoot,
+body.in-game #uiRoot{
+  display: block;
+}
+
+/* enquanto não está no jogo, garante que nada do jogo aparece/pega clique */
+body:not(.in-game) #gameRoot,
+body:not(.in-game) #uiRoot{
+  display: none !important;
+}
+
+/* canvas bonitinho */
+#gameRoot canvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+/* =========================
+   UI DO JOGO (cliques só nos elementos)
+   ========================= */
+#log{
+  position: absolute;
+  left: 18px;
+  bottom: 86px;
+  width: min(420px, 92vw);
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(6, 8, 16, .55);
+  backdrop-filter: blur(10px);
+  color: rgba(229,231,235,.92);
+  font-size: 13px;
+  line-height: 1.35;
+
+  pointer-events: auto;
+  z-index: 10000; /* ✅ acima */
+}
+
+#chatRow{
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  width: min(420px, 92vw);
+  display: grid;
+  grid-template-columns: 1fr 110px;
+  gap: 10px;
+
+  pointer-events: auto;
+  z-index: 10000; /* ✅ acima */
+}
+
+#chat{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.14);
+  outline: none;
+  background: rgba(2,6,23,.78);
+  color: rgba(229,231,235,1);
+  box-sizing: border-box;
+
+  /* ✅ garante digitação/seleção */
+  user-select: text;
+  -webkit-user-select: text;
+  pointer-events: auto;
+}
+
+#chat:focus{
+  border-color: rgba(168,85,247,.55);
+  box-shadow: 0 0 0 3px rgba(168,85,247,.18);
+}
+
+#send{
+  border: none;
+  border-radius: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  color: rgba(229,231,235,1);
+  background: linear-gradient(90deg, rgba(168,85,247,.92), rgba(239,68,68,.78));
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+
+  pointer-events: auto;
+}
+
+/* botão sair */
+#leaveBtn{
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(520px, 92vw);
+
+  pointer-events: auto;
+  z-index: 10001; /* ✅ mais alto que tudo */
+
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+
+  color: rgba(255,255,255,.95);
+  font-weight: 950;
+  font-size: 12px;
+  cursor: pointer;
+
+  background: linear-gradient(180deg, rgba(255,30,30,.95), rgba(140,0,0,.92));
+  box-shadow: 0 10px 26px rgba(0,0,0,.45);
+}
+
+#leaveBtn:hover{ filter: brightness(1.06); }
+#leaveBtn:active{ transform: translateX(-50%) scale(.98); }
+
+/* =========================
+   FUNDO DO LOGIN (sem clique)
+   ========================= */
+.bg{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: url("./assets/bg.jpg") center 35% / cover no-repeat;
+  filter: contrast(1.08) saturate(1.07) brightness(1.04);
+  pointer-events: none;
+}
+
+.bg::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 70% 25%, rgba(168,85,247,.12), transparent 45%),
+    radial-gradient(circle at 20% 20%, rgba(239,68,68,.08), transparent 45%),
+    linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.70));
+}
+
+.bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 50% 40%, transparent 50%, rgba(0,0,0,.60) 78%, rgba(0,0,0,.88) 100%);
+}
+
+.fog{
+  position: fixed;
+  inset: -20%;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(255,255,255,.06), transparent 55%),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.05), transparent 60%);
+  filter: blur(18px);
+  opacity: .60;
+  animation: drift 14s ease-in-out infinite alternate;
+}
+
+.grain{
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: .10;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.02), rgba(255,255,255,.02) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode: overlay;
+  filter: blur(.2px);
+}
+
+@keyframes drift {
+  from { transform: translate(-18px, 10px) scale(1.02); }
+  to   { transform: translate(18px, -10px) scale(1.06); }
+}
+
+/* =========================
+   LOGIN OVERLAY
+   ========================= */
+#loginOverlay{
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding: 22px;
+  pointer-events: auto;
+}
+
+.card{
+  width: min(380px, 92vw);
+  margin-right: clamp(60px, 10vw, 170px);
+  border-radius: 18px;
+  overflow: visible;
+  position: relative;
+}
+
+.cardInner{
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(6, 8, 16, .78), rgba(10, 12, 24, .70));
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 22px 70px rgba(0,0,0,.70);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.cardInner::after{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background: linear-gradient(90deg, transparent, rgba(168,85,247,.85), rgba(239,68,68,.70), transparent);
+  filter: drop-shadow(0 0 10px rgba(168,85,247,.35));
+}
+
+.logoWrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 10px 10px 6px;
+}
+
+.logo{
+  max-height: 220px;
+  max-width: 320px;
+  width:auto;
+  height:auto;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 45px rgba(0,0,0,.80));
+}
+
+.inner{ padding: 10px 16px 14px; }
+
+.subtitle{
+  text-align:center;
+  font-size: 13px;
+  opacity:.75;
+  margin: 4px 0 10px;
+}
+
+.divider{
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  margin: 8px 0 10px;
+}
+
+.form{ display:grid; gap:10px; place-items:center; }
+.field{ width:100%; max-width:300px; }
+#loginOverlay label{ font-size:12px; opacity:.8; display:block; margin:0 0 6px; }
+
+/* só inputs do login */
+#loginOverlay input,
+#loginOverlay select,
+#loginOverlay button{
+  width:100%;
+  background: rgba(2,6,23,.78);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,.14);
+  padding: 11px 12px;
+  border-radius: 12px;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+#loginOverlay input:focus,
+#loginOverlay select:focus{
+  border-color: rgba(168,85,247,.55);
+  box-shadow: 0 0 0 3px rgba(168,85,247,.18);
+}
+
+.btnWrap{ width:100%; max-width:300px; margin-top:2px; }
+
+#loginOverlay button{
+  cursor:pointer;
+  font-weight: 900;
+  border:none;
+  background: linear-gradient(90deg, rgba(168,85,247,.92), rgba(239,68,68,.78));
+  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+
+#loginOverlay button:hover{ filter: brightness(1.05); }
+
+/* quando entra no jogo, some tudo do login */
+body.in-game .bg,
+body.in-game .fog,
+body.in-game .grain,
+body.in-game #loginOverlay{
+  display:none !important;
+}
+
+@media (max-width: 520px){
+  #loginOverlay{ justify-content:center; }
+  .card{ margin-right:0; }
+  .bg{ background-position:center; }
+}
+
+body.in-game{
+  background: #070812;
+}
